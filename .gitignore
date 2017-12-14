@@ -1,0 +1,13 @@
+# Byte-compiled
+*.pyc
+
+# Distribution and deployment
+*.egg-info/
+*.egg
+*.eggs
+dist
+
+# Unit test / coverage reports
+htmlcov/
+.coverage
+.coverage.*

@@ -1,0 +1,1 @@
+from .fixtures.session_fixtures import app
