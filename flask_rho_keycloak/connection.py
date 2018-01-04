@@ -37,6 +37,7 @@ class ConnectionManager(object):
         except Exception as e:
             raise KeyCloakError('Unable to connect to server {0}'.format(e))
 
+    
     def put(self, path, data=None, json=None, request_headers=None):
 
         headers = request_headers or self.headers

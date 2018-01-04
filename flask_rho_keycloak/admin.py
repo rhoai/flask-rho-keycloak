@@ -156,7 +156,7 @@ class KeyCloakAdminManager(object):
             message = 'Error while creating user'
             raise_error_from_response(response, message)
             user_id = response.headers['location'][-36:]
-        
+
         self.add_group_user(
             current_app.config['KEYCLOAK_CLIENT_NAME'], user_id)
 
@@ -306,17 +306,35 @@ class KeyCloakAdminManager(object):
             'user-id': user_id
         }
 
-        data = {
-            'attributes': attributes,
-            'id': user_id
-        }
+        # data = {
+        #     'attributes': attributes,
+        #     'id': user_id
+        # }
+        data = attributes
 
+        # response = self._connection.put(
+        #     url_patterns.URL_ADMIN_USER.format(**path_params),
+        #     json=data, request_headers=self.admin_headers)
         response = self._connection.put(
-            url_patterns.URL_ADMIN_USER.format(**path_params),
+            url_patterns.URL_SAFE_CUSTOM_ATTRIBUTES.format(**path_params),
             json=data, request_headers=self.admin_headers)
 
         message = 'Error while updating custom user attributes'
         raise_error_from_response(response, message)
+
+    def search_custom_user_attributes(self, attributes):
+
+        path_params = {
+            'realm-name': current_app.config['KEYCLOAK_REALM']
+        }
+
+        response = self._connection.post(
+            url_patterns.URL_SAFE_CUSTOM_ATTRIBUTES_SEARCH.format(**path_params),
+            json=attributes, request_headers=self.admin_headers)
+
+        message = 'Error while searching custom user attributes'
+        raw = raise_error_from_response(response, message)
+        return raw.get('userInfo', {})
 
     def delete_user(self, user_id):
 
@@ -390,18 +408,26 @@ class KeyCloakAdminManager(object):
         raw = raise_error_from_response(response, message)
         return raw.get('userInfo', {})
 
-    def validate_mobile_reset_password_code(self, code):
+    def validate_auth_code(self, code, code_type='reset_password'):
 
+        code_types = ['reset_password', 'registration']
+        if code_type not in code_types:
+            raise ValueError('Invalid auth code type')
+
+        # path_params = {
+        #     'realm-name': current_app.config['KEYCLOAK_REALM'],
+        #     'client-name': current_app.config['KEYCLOAK_CLIENT_NAME']
+        # }
         path_params = {
-            'realm-name': current_app.config['KEYCLOAK_REALM'],
-            'client-name': current_app.config['KEYCLOAK_CLIENT_NAME']
+            'realm-name': current_app.config['KEYCLOAK_REALM']
         }
 
         params = {
-            'code': code
+            'code': code,
+            'code-type': code_type
         }
 
-        url = url_patterns.URL_VALIDATE_RESET_MOBILE_PASSWORD_CODE\
+        url = url_patterns.URL_VALIDATE_AUTH_CODE\
             .format(**path_params)
         response = self._connection.get(url, params=params,
                                         request_headers=self.admin_headers)
