@@ -82,7 +82,7 @@ class KeyCloakAuthManager(object):
                 raise KeyCloakError(response_code=401)
         return raw
 
-    def refresh_access_token(self, access_token, refresh_token):
+    def refresh_access_token(self, refresh_token):
 
         path_params = {'realm-name': current_app.config['KEYCLOAK_REALM']}
         data = {
