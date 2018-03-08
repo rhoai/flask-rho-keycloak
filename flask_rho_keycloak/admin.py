@@ -96,7 +96,7 @@ class KeyCloakAdminManager(object):
         message = 'Error while loading user {}'.format(user_id)
         raw = raise_error_from_response(response, message)
 
-        return {
+        user = {
             'id': raw['id'],
             'username': raw['username'],
             'email': raw['email'],
@@ -106,6 +106,13 @@ class KeyCloakAdminManager(object):
             'active': raw['enabled'],
             'roles': self.get_role_mappings(user_id)
         }
+
+        if 'attributes' in raw:
+            for key, value in raw['attributes'].iteritems():
+                if value:
+                    user[key] = value[0]
+
+        return user
 
     def get_role_mappings(self, user_id):
 
