@@ -1,4 +1,5 @@
 import requests
+from flask import current_app
 
 from .exceptions import KeyCloakError
 try:
@@ -14,6 +15,8 @@ class ConnectionManager(object):
         self.base_url = urljoin(base_url, 'auth/')
         self.headers = headers
 
+        self.verify = current_app.config.get('KEYCLOAK_SSL_CA_PATH') or False
+
     def get(self, path, params=None, request_headers=None):
 
         headers = request_headers or self.headers
@@ -21,7 +24,7 @@ class ConnectionManager(object):
             return requests.get(urljoin(self.base_url, path),
                                 params=params,
                                 headers=headers,
-                                verify=False)
+                                verify=self.verify)
         except Exception as e:
             raise KeyCloakError('Unable to connect to server {0}'.format(e))
 
@@ -33,11 +36,10 @@ class ConnectionManager(object):
                                  data=data,
                                  json=json,
                                  headers=headers,
-                                 verify=False)
+                                 verify=self.verify)
         except Exception as e:
             raise KeyCloakError('Unable to connect to server {0}'.format(e))
 
-    
     def put(self, path, data=None, json=None, request_headers=None):
 
         headers = request_headers or self.headers
@@ -46,7 +48,7 @@ class ConnectionManager(object):
                                 data=data,
                                 json=json,
                                 headers=headers,
-                                verify=False)
+                                verify=self.verify)
         except Exception as e:
             raise KeyCloakError('Unable to connect to server {0}'.format(e))
 
@@ -57,6 +59,6 @@ class ConnectionManager(object):
             return requests.delete(urljoin(self.base_url, path),
                                    json=json,
                                    headers=headers,
-                                   verify=False)
+                                   verify=self.verify)
         except Exception as e:
             raise KeyCloakError('Unable to connect to server {0}'.format(e))

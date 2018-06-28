@@ -57,7 +57,8 @@ setup(
     install_requires=[
         'requests >= 2.18.4',
         'python-jose==1.4.0',
-        'Flask==0.12.2'
+        'Flask==0.12.2',
+        'certifi==2018.01.18'
     ],
     tests_require=[
         'pytest >= 2.7.1',

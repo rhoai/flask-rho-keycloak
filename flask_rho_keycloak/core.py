@@ -52,8 +52,4 @@ class KeyCloak(object):
             key = auth.get_jwt_cert()
 
         cache.set('keycloak_secret_key', key, timeout=0)
-
-
-
-
         

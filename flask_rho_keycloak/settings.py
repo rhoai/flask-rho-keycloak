@@ -22,6 +22,9 @@ def init_settings(config):
     # App signing key
     config.setdefault('API_SIGNING_KEY', 'secret')
 
+    # ssl sa path
+    config.setdefault('KEYCLOAK_SSL_CA_PATH', None)
+
 
 def validate_settings(config):
     """ Validates that the given settings are correct.
